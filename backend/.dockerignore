@@ -1,0 +1,50 @@
+# Dependencies
+/vendor
+/node_modules
+
+# Environment files (will be mounted or provided at runtime)
+.env
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Testing
+/coverage
+.phpunit.result.cache
+phpunit.xml
+
+# Build artifacts
+/public/hot
+/public/storage
+/storage/*.key
+
+# Logs
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# Cache (except .gitignore files)
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+
+# Documentation
+*.md
+!README.md

@@ -1,0 +1,42 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"""
+GraphQL Schema for LawnStarter Assessment
+
+This is an OPTIONAL GraphQL implementation. You can choose to:
+1. Use REST API only (routes/api.php)
+2. Use GraphQL only (this file)
+3. Support both REST and GraphQL
+
+If you choose GraphQL, implement your types and queries here.
+For documentation on Lighthouse GraphQL, see: https://lighthouse-php.com
+"""
+
+type Query {
+    "Health check query"
+    health: String! @field(resolver: "App\\GraphQL\\Queries\\Health")
+}
+
+# =============================================================================
+# TODO: Define your GraphQL types, queries, and mutations below.
+# =============================================================================
+#
+# Example Person Type to guide your implementation:
+#
+# type Person {
+#     id: ID!
+#     name: String!
+#     height: String
+#     birthYear: String
+#     films: [Film!]! @belongsToMany
+#     createdAt: DateTime!
+#     updatedAt: DateTime!
+# }
+#
+# Remember to:
+# - Use camelCase for field names (birthYear, not birth_year)
+# - Define relationships using Lighthouse directives (@belongsToMany, @hasMany, etc.)
+# - Create input types for mutations
+# - Add proper documentation strings
+

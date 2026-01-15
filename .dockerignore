@@ -1,0 +1,20 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (keep README)
+*.md
+!README.md
+
+# Environment files (handled separately)
+.env
+.env.local
+.env.*.local
