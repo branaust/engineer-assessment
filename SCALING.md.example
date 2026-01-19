@@ -1,0 +1,35 @@
+# Scaling Considerations
+
+Answer the following questions about how you would scale this application. For each question, provide 1-2 paragraphs explaining your approach.
+
+---
+
+## 1. How would you handle 100k searches/day?
+
+**Current state:** [Describe current limitations]
+
+**Scaling approach:** [Your solution]
+
+---
+
+## 2. What happens when the dataset grows 50x?
+
+**Impact analysis:** [What breaks or slows down?]
+
+**Solution:** [Your approach]
+
+---
+
+## 3. What would you monitor in production?
+
+**Key metrics:** [What to measure]
+
+**Alerting:** [What triggers alerts]
+
+---
+
+## 4. What would you document for the next engineer?
+
+**Critical documentation:** [Most important things to know]
+
+**Common pitfalls:** [What to watch out for]

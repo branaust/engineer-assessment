@@ -1,4 +1,4 @@
-# Architectural decisions
+# Architectural Decisions
 
 Document your key architectural decisions here. For each major decision, explain your reasoning, the alternatives you considered, and the trade-offs you accepted.
 
@@ -29,7 +29,7 @@ Trade-offs you accepted, technical debt incurred, or future considerations
 
 ---
 
-## Example Decision 1: Database Schema Design
+## Example
 
 **Context:** 
 Needed to store Star Wars data from SWAPI with relationships between people and films while supporting efficient queries for search and statistics.
@@ -53,16 +53,3 @@ Chose normalized relational schema...
 ## Your Decisions
 
 Replace the example above with your actual decisions. Aim for 3-5 decisions that showcase your architectural thinking.
-
-### Suggested Topics
-
-Consider documenting decisions about:
-- Database schema design
-- REST vs GraphQL (or both)
-- How you handle SWAPI rate limits
-- Statistics calculation and caching strategy
-- Queue vs scheduled tasks
-- Error handling approach
-- Testing strategy
-- Any interesting technical challenges you faced
-

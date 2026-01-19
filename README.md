@@ -1,6 +1,6 @@
 # Star Wars Engineer Assessment
 
-A full-stack application for managing Star Wars characters and films data using Laravel (backend) and React Router (frontend).
+A full-stack application starter for managing Star Wars characters and films data using Laravel (backend) and React Router (frontend).
 
 ## Quick Start with Docker
 
@@ -35,16 +35,10 @@ The easiest way to get started is using Docker. This will spin up all services w
 
 4. **Wait for services to be healthy** (first run takes a few minutes to build).
 
-5. **In a new terminal, run database migrations and seed data:**
+5. **In a new terminal, run database migrations and generate app key:**
    ```bash
-   # Run migrations
    docker compose exec backend php artisan migrate
-
-   # Generate app key (if not already set)
    docker compose exec backend php artisan key:generate
-
-   # Seed the database with SWAPI data
-   docker compose exec backend php artisan db:seed
    ```
 
 6. **Access the application:**
@@ -67,7 +61,7 @@ The easiest way to get started is using Docker. This will spin up all services w
 # Start all services
 docker compose up
 
-# Start in background (detached mode)
+# Start in background
 docker compose up -d
 
 # Stop all services
@@ -76,27 +70,32 @@ docker compose down
 # View logs
 docker compose logs -f
 
-# View specific service logs
-docker compose logs -f backend
-docker compose logs -f frontend
-
-# Run artisan commands
-docker compose exec backend php artisan <command>
-
-# Run tests
-docker compose exec backend php artisan test
-
-# Access MySQL CLI
-docker compose exec mysql mysql -u starwars -psecret starwars
-
-# Access Redis CLI
-docker compose exec redis redis-cli
-
-# Rebuild after Dockerfile changes
+# Rebuild after changes
 docker compose up --build
 
-# Clean up volumes (WARNING: deletes database data)
+# Clean up (removes volumes/data)
 docker compose down -v
+```
+
+**Backend commands:**
+```bash
+docker compose exec backend php artisan migrate
+docker compose exec backend php artisan db:seed
+docker compose exec backend php artisan migrate:fresh --seed
+docker compose exec backend php artisan test
+docker compose exec backend ./vendor/bin/pint
+```
+
+**Frontend commands:**
+```bash
+docker compose exec frontend yarn typecheck
+docker compose exec frontend yarn build
+```
+
+**Database access:**
+```bash
+docker compose exec mysql mysql -u starwars -psecret starwars
+docker compose exec redis redis-cli
 ```
 
 ### IDE Setup (Optional)
@@ -148,61 +147,6 @@ docker compose up --build
 
 ---
 
-## Documentation
-
-- **Implementation Guide:** See [backend/GETTING_STARTED.md](./backend/GETTING_STARTED.md) for what to implement
-- **Requirements Checklist:** See [backend/ASSESSMENT_REQUIREMENTS.md](./backend/ASSESSMENT_REQUIREMENTS.md)
-- **Frontend:** See [frontend/README.md](./frontend/README.md)
-
----
-
-## Local Development (Without Docker)
-
-If you prefer running services locally without Docker:
-
-### Frontend Quick Setup
-
-```bash
-cd frontend
-
-# Enable Corepack for Yarn 4
-corepack enable
-
-# Install dependencies
-yarn
-
-# Start development server
-yarn dev
-```
-
-### Backend Quick Setup
-
-Requires PHP 8.2+, Composer, MySQL, and Redis.
-
-```bash
-cd backend
-
-# Install dependencies
-composer install
-
-# Copy environment file
-cp .env.example .env
-
-# Generate app key
-php artisan key:generate
-
-# Run migrations
-php artisan migrate
-
-# Seed database
-php artisan db:seed
-
-# Start server
-php artisan serve
-```
-
----
-
 ## Project Structure
 
 ```
@@ -225,33 +169,49 @@ engineer-assessment/
 │   │   └── root.tsx                # Root Layout
 │   └── vite.config.ts              # Vite Configuration
 ├── docker-compose.yml       # Docker Orchestration
+├── DECISIONS.md.example     # Template for architectural decisions
+├── SCALING.md.example       # Template for scaling questions
 └── .env.example             # Environment Template
 ```
 
 ---
 
-## API Endpoints
+## Documentation Templates
 
-| Method | Endpoint              | Description                    |
-|--------|----------------------|--------------------------------|
-| GET    | /api/health          | Health check                   |
-| GET    | /api/people          | List people (with search)      |
-| GET    | /api/people/{id}     | Get person with films          |
-| POST   | /api/people          | Create person                  |
-| PUT    | /api/people/{id}     | Update person                  |
-| DELETE | /api/people/{id}     | Delete person                  |
-| GET    | /api/films           | List films (with search)       |
-| GET    | /api/films/{id}      | Get film with people           |
-| POST   | /api/films           | Create film                    |
-| PUT    | /api/films/{id}      | Update film                    |
-| DELETE | /api/films/{id}      | Delete film                    |
-| GET    | /api/statistics      | Search statistics              |
+When you complete the assessment, create these files from the provided templates:
+
+| Template | Create As | Purpose |
+|----------|-----------|---------|
+| `DECISIONS.md.example` | `DECISIONS.md` | Document your architectural decisions |
+| `SCALING.md.example` | `SCALING.md` | Answer scaling questions |
 
 ---
 
-## Assessment Requirements
+## Local Development (Without Docker)
 
-See [backend/ASSESSMENT_REQUIREMENTS.md](./backend/ASSESSMENT_REQUIREMENTS.md) for the full requirements.
+If you prefer running services locally without Docker:
+
+### Frontend
+
+```bash
+cd frontend
+corepack enable
+yarn install
+yarn dev
+```
+
+### Backend
+
+Requires PHP 8.4+, Composer, MySQL, and Redis.
+
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
 
 ---
 
