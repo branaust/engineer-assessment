@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 
 /**
  * Person Controller
- * 
+ *
  * Handles API requests for Star Wars people/characters.
- * 
+ *
  * This is an EXAMPLE controller to guide your implementation.
  * You'll need to implement the actual CRUD operations.
- * 
+ *
  * Endpoints:
  * - GET    /api/people       - List all people (with search/filter)
  * - GET    /api/people/{id}  - Get specific person
@@ -26,9 +26,9 @@ class PersonController extends Controller
 {
     /**
      * Display a listing of people.
-     * 
+     *
      * Supports search via ?search=query parameter.
-     * 
+     *
      * Example: GET /api/people?search=Luke
      */
     public function index(Request $request): JsonResponse
@@ -39,7 +39,7 @@ class PersonController extends Controller
         // - Pagination
         // - Eager loading relationships
         // - Logging searches for statistics
-        
+
         return response()->json([
             'data' => [],
             'message' => 'TODO: Implement PersonController@index',
@@ -48,7 +48,7 @@ class PersonController extends Controller
 
     /**
      * Display the specified person.
-     * 
+     *
      * Example: GET /api/people/1
      */
     public function show(string $id): JsonResponse
@@ -57,7 +57,7 @@ class PersonController extends Controller
         // Consider:
         // - Loading related films
         // - Handling not found
-        
+
         return response()->json([
             'data' => null,
             'message' => 'TODO: Implement PersonController@show',
@@ -66,7 +66,7 @@ class PersonController extends Controller
 
     /**
      * Store a newly created person.
-     * 
+     *
      * Example: POST /api/people
      */
     public function store(Request $request): JsonResponse
@@ -75,7 +75,7 @@ class PersonController extends Controller
         // Consider:
         // - Validation
         // - Handling relationships
-        
+
         return response()->json([
             'data' => null,
             'message' => 'TODO: Implement PersonController@store',
@@ -84,7 +84,7 @@ class PersonController extends Controller
 
     /**
      * Update the specified person.
-     * 
+     *
      * Example: PUT /api/people/1
      */
     public function update(Request $request, string $id): JsonResponse
@@ -94,7 +94,7 @@ class PersonController extends Controller
         // - Validation
         // - Handling not found
         // - Updating relationships
-        
+
         return response()->json([
             'data' => null,
             'message' => 'TODO: Implement PersonController@update',
@@ -103,7 +103,7 @@ class PersonController extends Controller
 
     /**
      * Remove the specified person.
-     * 
+     *
      * Example: DELETE /api/people/1
      */
     public function destroy(string $id): JsonResponse
@@ -112,10 +112,9 @@ class PersonController extends Controller
         // Consider:
         // - Handling not found
         // - Cascade deleting relationships
-        
+
         return response()->json([
             'message' => 'TODO: Implement PersonController@destroy',
         ]);
     }
 }
-

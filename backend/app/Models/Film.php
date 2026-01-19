@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Film Model
- * 
+ *
  * Represents a Star Wars film from SWAPI.
- * 
+ *
  * TODO: Configure this model based on your database schema.
  */
 class Film extends Model
@@ -18,7 +18,7 @@ class Film extends Model
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * Add the fields that can be filled via create() or update()
      * Example: ['title', 'episode_id', 'director', 'release_date']
      *
@@ -28,7 +28,7 @@ class Film extends Model
 
     /**
      * TODO: Define relationship to people (many-to-many).
-     * 
+     *
      * Example implementation:
      * public function people(): BelongsToMany
      * {
@@ -36,4 +36,3 @@ class Film extends Model
      * }
      */
 }
-

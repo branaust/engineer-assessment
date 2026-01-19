@@ -8,12 +8,12 @@ use Illuminate\Http\Request;
 
 /**
  * Film Controller
- * 
+ *
  * Handles API requests for Star Wars films.
- * 
+ *
  * This is an EXAMPLE controller to guide your implementation.
  * Similar structure to PersonController but for films.
- * 
+ *
  * Endpoints:
  * - GET    /api/films       - List all films (with search/filter)
  * - GET    /api/films/{id}  - Get specific film
@@ -25,7 +25,7 @@ class FilmController extends Controller
 {
     /**
      * Display a listing of films.
-     * 
+     *
      * Supports search via ?search=query parameter.
      */
     public function index(Request $request): JsonResponse
@@ -84,4 +84,3 @@ class FilmController extends Controller
         ]);
     }
 }
-

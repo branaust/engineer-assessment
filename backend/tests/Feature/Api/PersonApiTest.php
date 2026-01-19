@@ -7,10 +7,10 @@ use Tests\TestCase;
 
 /**
  * Person API Test
- * 
+ *
  * Example test to guide your implementation.
  * Write tests for your CRUD operations here.
- * 
+ *
  * Run tests: docker compose exec backend php artisan test
  */
 class PersonApiTest extends TestCase
@@ -25,9 +25,9 @@ class PersonApiTest extends TestCase
         // TODO: Implement this test
         // Example:
         // Person::factory()->count(3)->create();
-        // 
+        //
         // $response = $this->getJson('/api/people');
-        // 
+        //
         // $response->assertStatus(200)
         //          ->assertJsonStructure(['data']);
 
@@ -88,4 +88,3 @@ class PersonApiTest extends TestCase
         $this->markTestIncomplete('Implement PersonApiTest@test_person_includes_films');
     }
 }
-

@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Person Model
- * 
+ *
  * Represents a Star Wars character from SWAPI.
- * 
+ *
  * TODO: Configure this model based on your database schema.
  */
 class Person extends Model
@@ -26,7 +26,7 @@ class Person extends Model
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * Add the fields that can be filled via create() or update()
      * Example: ['name', 'height', 'mass', 'birth_year']
      *
@@ -36,7 +36,7 @@ class Person extends Model
 
     /**
      * TODO: Define relationship to films (many-to-many).
-     * 
+     *
      * Example implementation:
      * public function films(): BelongsToMany
      * {
@@ -44,4 +44,3 @@ class Person extends Model
      * }
      */
 }
-

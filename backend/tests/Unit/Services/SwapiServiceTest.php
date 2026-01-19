@@ -6,10 +6,10 @@ use Tests\TestCase;
 
 /**
  * SWAPI Service Test
- * 
+ *
  * Example test to guide your implementation.
  * Write tests for your SWAPI service here.
- * 
+ *
  * Consider testing:
  * - Successful API calls
  * - Error handling
@@ -66,4 +66,3 @@ class SwapiServiceTest extends TestCase
         $this->markTestIncomplete('Implement SwapiServiceTest@test_handles_api_errors');
     }
 }
-

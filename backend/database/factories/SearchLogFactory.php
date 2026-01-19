@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * SearchLog Factory
- * 
+ *
  * Factory for creating SearchLog model instances in tests.
  * Useful for testing statistics calculations.
- * 
+ *
  * Usage in tests:
  *   SearchLog::factory()->create();
  *   SearchLog::factory()->count(50)->create();
- * 
+ *
  * Feel free to add more attributes to the model as needed!
  */
 class SearchLogFactory extends Factory
@@ -44,4 +44,3 @@ class SearchLogFactory extends Factory
         ];
     }
 }
-

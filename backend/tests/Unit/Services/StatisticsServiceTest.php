@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 /**
  * Statistics Service Test
- * 
+ *
  * Example test to guide your implementation.
  * Write tests for your statistics calculations here.
  */
@@ -61,4 +61,3 @@ class StatisticsServiceTest extends TestCase
         $this->markTestIncomplete('Implement StatisticsServiceTest@test_handles_no_search_logs');
     }
 }
-
