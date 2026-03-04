@@ -2,6 +2,9 @@
 
 A full-stack Star Wars searchable interface with a Laravel API backend and React Native (Expo) mobile frontend.
 
+
+<video src="https://github.com/user-attachments/assets/5fc4101f-7060-4636-abd1-85d59319ee13" width="250" />
+
 **Features:** CRUD for People & Films, full-text search, detail views with related resources, search analytics updated every 5 minutes via background queue.
 
 ---
