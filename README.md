@@ -1,5 +1,3 @@
-<video src="https://github.com/user-attachments/assets/5fc4101f-7060-4636-abd1-85d59319ee13" width="250" />
-
 # Star Wars Full-Stack Assessment
 
 A full-stack Star Wars searchable interface with a Laravel API backend and React Native (Expo) mobile frontend.
@@ -214,3 +212,5 @@ DB_EXTERNAL_PORT=3308
 **Frontend can't reach API on physical device:** Set `EXPO_PUBLIC_API_URL=http://192.168.x.x:8080/api` in `frontend/.env` (use your machine's LAN IP).
 
 **Statistics always show zeroes:** Make sure you've performed some searches first, then either wait 5 minutes for the scheduler, or dispatch the job manually via Tinker.
+
+<video src="https://github.com/user-attachments/assets/5fc4101f-7060-4636-abd1-85d59319ee13" width="250" />
