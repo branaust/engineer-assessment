@@ -20,7 +20,7 @@ class PersonController extends Controller
         $startTime = microtime(true);
         $search = $request->query('search');
 
-        $query = Person::with('films')->latest();
+        $query = Person::with('films')->orderByDesc('id');
 
         if ($search !== null && $search !== '') {
             $query->where('name', 'LIKE', "%{$search}%");
