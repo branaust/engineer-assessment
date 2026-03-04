@@ -1,6 +1,7 @@
 # Docker Compose configuration for Star Wars Engineer Assessment
 # Run: docker compose up --build
-# Access: Frontend at http://localhost:5173 | Backend API at http://localhost:8080
+# Backend API: http://localhost:8080
+# Frontend (Expo): cd frontend && npx expo start (runs on host, not Docker)
 
 services:
   # ===========================================
@@ -113,27 +114,6 @@ services:
     restart: unless-stopped
 
   # ===========================================
-  # Frontend Services
-  # ===========================================
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: development
-    ports:
-      - "${FRONTEND_PORT:-5173}:5173"
-    environment:
-      VITE_API_URL: "${VITE_API_URL:-http://localhost:8000/api}"
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
-    depends_on:
-      - backend
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  # ===========================================
   # Database Services
   # ===========================================
   mysql:
@@ -192,6 +172,4 @@ volumes:
   redis_data:
     driver: local
   backend_vendor:
-    driver: local
-  frontend_node_modules:
     driver: local

@@ -2,71 +2,71 @@
 
 namespace App\Services;
 
+use App\Models\SearchLog;
+use Illuminate\Support\Facades\DB;
+
 /**
- * Statistics Service
- *
- * Service for calculating and retrieving search statistics.
- *
- * This is an EXAMPLE service to guide your implementation.
- * You'll need to implement the logic to calculate:
- * - Average request duration
- * - Most popular hour of day (0-23)
- * - Top 5 search queries with percentages
- *
- * Consider:
- * - Caching results (they update every 5 minutes anyway)
- * - Using database aggregation for performance
- * - Handling edge cases (no data, ties, etc.)
+ * Calculates search analytics from the search_logs table.
+ * Results are cached in Redis by UpdateStatisticsJob every 5 minutes.
  */
 class StatisticsService
 {
-    /**
-     * Get all statistics.
-     */
     public function getStatistics(): array
     {
         return [
             'average_duration_ms' => $this->getAverageDuration(),
-            'most_popular_hour' => $this->getMostPopularHour(),
-            'top_searches' => $this->getTopSearches(),
+            'most_popular_hour'   => $this->getMostPopularHour(),
+            'top_searches'        => $this->getTopSearches(),
         ];
     }
 
     /**
-     * Calculate average request duration in milliseconds.
+     * Average search duration across all logged requests.
      */
     public function getAverageDuration(): float
     {
-        // TODO: Implement this method
-        // Hint: Use SearchLog model and database aggregation
-
-        return 0.0;
+        return (float) (SearchLog::avg('duration_ms') ?? 0.0);
     }
 
     /**
-     * Get the most popular hour of day for searches (0-23).
+     * Hour of day (0-23) with the highest number of searches.
+     * Returns null when no data exists.
      */
     public function getMostPopularHour(): ?int
     {
-        // TODO: Implement this method
-        // Hint: Extract hour from searched_at and count occurrences
+        $result = SearchLog::selectRaw('HOUR(searched_at) as hour, COUNT(*) as cnt')
+            ->groupBy(DB::raw('HOUR(searched_at)'))
+            ->orderByDesc('cnt')
+            ->first();
 
-        return null;
+        return $result ? (int) $result->hour : null;
     }
 
     /**
-     * Get top 5 search queries with usage percentages.
+     * Top 5 non-empty search queries ranked by frequency, with percentage share.
+     * Percentages are relative to all non-null query searches (not total requests).
+     *
+     * @return array<int, array{query: string, count: int, percentage: float}>
      */
     public function getTopSearches(): array
     {
-        // TODO: Implement this method
-        // Return format example:
-        // [
-        //     ['query' => 'Luke', 'count' => 50, 'percentage' => 25.0],
-        //     ['query' => 'Vader', 'count' => 30, 'percentage' => 15.0],
-        //     ...
-        // ]
+        $total = SearchLog::whereNotNull('query')->count();
 
-        return [];
+        if ($total === 0) {
+            return [];
+        }
+
+        return SearchLog::selectRaw('query, COUNT(*) as count')
+            ->whereNotNull('query')
+            ->groupBy('query')
+            ->orderByDesc('count')
+            ->limit(5)
+            ->get()
+            ->map(fn ($row) => [
+                'query'      => $row->query,
+                'count'      => (int) $row->count,
+                'percentage' => round(($row->count / $total) * 100, 1),
+            ])
+            ->toArray();
     }
 }

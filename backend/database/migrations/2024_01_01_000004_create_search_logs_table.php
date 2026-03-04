@@ -29,11 +29,16 @@ return new class extends Migration
     {
         Schema::create('search_logs', function (Blueprint $table) {
             $table->id();
-
-            // TODO: Add columns for tracking searches
-            // Consider: query, resource_type, duration_ms, searched_at, etc.
-
+            $table->string('query')->nullable();
+            $table->string('resource_type', 20);
+            $table->unsignedInteger('results_count')->default(0);
+            $table->unsignedInteger('duration_ms');
+            $table->string('ip_address', 45)->nullable();
+            $table->string('user_agent')->nullable();
+            $table->timestamp('searched_at')->useCurrent();
             $table->timestamps();
+            $table->index('searched_at');
+            $table->index('query');
         });
     }
 

@@ -4,117 +4,143 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Person;
+use App\Models\SearchLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
-/**
- * Person Controller
- *
- * Handles API requests for Star Wars people/characters.
- *
- * This is an EXAMPLE controller to guide your implementation.
- * You'll need to implement the actual CRUD operations.
- *
- * Endpoints:
- * - GET    /api/people       - List all people (with search/filter)
- * - GET    /api/people/{id}  - Get specific person
- * - POST   /api/people       - Create new person
- * - PUT    /api/people/{id}  - Update person
- * - DELETE /api/people/{id}  - Delete person
- */
 class PersonController extends Controller
 {
     /**
-     * Display a listing of people.
-     *
-     * Supports search via ?search=query parameter.
-     *
-     * Example: GET /api/people?search=Luke
+     * List people with optional search. Logs searches for analytics.
+     * GET /api/people?search=Luke&page=1
      */
     public function index(Request $request): JsonResponse
     {
-        // TODO: Implement this method
-        // Consider:
-        // - Search functionality
-        // - Pagination
-        // - Eager loading relationships
-        // - Logging searches for statistics
+        $startTime = microtime(true);
+        $search = $request->query('search');
+
+        $query = Person::with('films')->latest();
+
+        if ($search !== null && $search !== '') {
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        $people = $query->paginate(15);
+        $duration = (int) ((microtime(true) - $startTime) * 1000);
+
+        // Only log when the search param is explicitly present
+        if ($request->has('search')) {
+            SearchLog::create([
+                'query'         => $search ?: null,
+                'resource_type' => 'people',
+                'results_count' => $people->total(),
+                'duration_ms'   => $duration,
+                'ip_address'    => $request->ip(),
+                'user_agent'    => $request->userAgent(),
+                'searched_at'   => now(),
+            ]);
+        }
 
         return response()->json([
-            'data' => [],
-            'message' => 'TODO: Implement PersonController@index',
+            'data'  => $people->items(),
+            'links' => [
+                'first' => $people->url(1),
+                'last'  => $people->url($people->lastPage()),
+                'prev'  => $people->previousPageUrl(),
+                'next'  => $people->nextPageUrl(),
+            ],
+            'meta'  => [
+                'current_page' => $people->currentPage(),
+                'from'         => $people->firstItem(),
+                'last_page'    => $people->lastPage(),
+                'per_page'     => $people->perPage(),
+                'to'           => $people->lastItem(),
+                'total'        => $people->total(),
+            ],
         ]);
     }
 
     /**
-     * Display the specified person.
-     *
-     * Example: GET /api/people/1
+     * Get a single person with their films.
+     * GET /api/people/{id}
      */
     public function show(string $id): JsonResponse
     {
-        // TODO: Implement this method
-        // Consider:
-        // - Loading related films
-        // - Handling not found
+        $person = Person::with('films')->findOrFail($id);
 
-        return response()->json([
-            'data' => null,
-            'message' => 'TODO: Implement PersonController@show',
-        ]);
+        return response()->json(['data' => $person]);
     }
 
     /**
-     * Store a newly created person.
-     *
-     * Example: POST /api/people
+     * Create a new person.
+     * POST /api/people
      */
     public function store(Request $request): JsonResponse
     {
-        // TODO: Implement this method
-        // Consider:
-        // - Validation
-        // - Handling relationships
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'height'     => 'nullable|string|max:50',
+            'mass'       => 'nullable|string|max:50',
+            'hair_color' => 'nullable|string|max:100',
+            'skin_color' => 'nullable|string|max:100',
+            'eye_color'  => 'nullable|string|max:100',
+            'birth_year' => 'nullable|string|max:50',
+            'gender'     => 'nullable|string|max:50',
+            'homeworld'  => 'nullable|string|max:255',
+            'film_ids'   => 'nullable|array',
+            'film_ids.*' => 'integer|exists:films,id',
+        ]);
 
-        return response()->json([
-            'data' => null,
-            'message' => 'TODO: Implement PersonController@store',
-        ], 201);
+        $person = Person::create(Arr::except($validated, ['film_ids']));
+
+        if (! empty($validated['film_ids'])) {
+            $person->films()->sync($validated['film_ids']);
+        }
+
+        return response()->json(['data' => $person->load('films')], 201);
     }
 
     /**
-     * Update the specified person.
-     *
-     * Example: PUT /api/people/1
+     * Update an existing person.
+     * PUT /api/people/{id}
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        // TODO: Implement this method
-        // Consider:
-        // - Validation
-        // - Handling not found
-        // - Updating relationships
+        $person = Person::findOrFail($id);
 
-        return response()->json([
-            'data' => null,
-            'message' => 'TODO: Implement PersonController@update',
+        $validated = $request->validate([
+            'name'       => 'sometimes|required|string|max:255',
+            'height'     => 'nullable|string|max:50',
+            'mass'       => 'nullable|string|max:50',
+            'hair_color' => 'nullable|string|max:100',
+            'skin_color' => 'nullable|string|max:100',
+            'eye_color'  => 'nullable|string|max:100',
+            'birth_year' => 'nullable|string|max:50',
+            'gender'     => 'nullable|string|max:50',
+            'homeworld'  => 'nullable|string|max:255',
+            'film_ids'   => 'nullable|array',
+            'film_ids.*' => 'integer|exists:films,id',
         ]);
+
+        $person->update(Arr::except($validated, ['film_ids']));
+
+        if (array_key_exists('film_ids', $validated)) {
+            $person->films()->sync($validated['film_ids'] ?? []);
+        }
+
+        return response()->json(['data' => $person->load('films')]);
     }
 
     /**
-     * Remove the specified person.
-     *
-     * Example: DELETE /api/people/1
+     * Delete a person. Cascade handles the pivot table.
+     * DELETE /api/people/{id}
      */
     public function destroy(string $id): JsonResponse
     {
-        // TODO: Implement this method
-        // Consider:
-        // - Handling not found
-        // - Cascade deleting relationships
+        $person = Person::findOrFail($id);
+        $person->delete();
 
-        return response()->json([
-            'message' => 'TODO: Implement PersonController@destroy',
-        ]);
+        return response()->json(['message' => 'Person deleted successfully']);
     }
 }

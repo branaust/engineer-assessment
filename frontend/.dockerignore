@@ -1,9 +1,0 @@
-.react-router
-build
-node_modules
-README.md
-
-# Yarn - ignore cache but keep releases
-.yarn/cache
-.yarn/install-state.gz
-.pnp.*

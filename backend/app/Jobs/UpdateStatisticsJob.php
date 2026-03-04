@@ -47,12 +47,11 @@ class UpdateStatisticsJob implements ShouldQueue
         Log::info('Updating statistics...');
 
         try {
-            // TODO: Implement statistics calculation and caching
-            // Example:
-            // $statistics = $statisticsService->getStatistics();
-            // Cache::put('search_statistics', $statistics, now()->addMinutes(5));
+            $statistics = $statisticsService->getStatistics();
+            // 6-minute TTL buffers against slight scheduling jitter (job runs every 5 min)
+            \Illuminate\Support\Facades\Cache::put('search_statistics', $statistics, now()->addMinutes(6));
 
-            Log::info('Statistics updated successfully');
+            Log::info('Statistics updated successfully', ['stats' => $statistics]);
         } catch (\Exception $e) {
             Log::error('Failed to update statistics', [
                 'message' => $e->getMessage(),

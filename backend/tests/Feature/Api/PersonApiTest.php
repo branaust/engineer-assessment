@@ -2,89 +2,85 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Film;
+use App\Models\Person;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-/**
- * Person API Test
- *
- * Example test to guide your implementation.
- * Write tests for your CRUD operations here.
- *
- * Run tests: docker compose exec backend php artisan test
- */
 class PersonApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test that the people endpoint returns a successful response.
-     */
     public function test_can_list_people(): void
     {
-        // TODO: Implement this test
-        // Example:
-        // Person::factory()->count(3)->create();
-        //
-        // $response = $this->getJson('/api/people');
-        //
-        // $response->assertStatus(200)
-        //          ->assertJsonStructure(['data']);
+        Person::factory()->count(3)->create();
 
-        $this->markTestIncomplete('Implement PersonApiTest@test_can_list_people');
+        $this->getJson('/api/people')
+            ->assertStatus(200)
+            ->assertJsonStructure(['data', 'links', 'meta']);
     }
 
-    /**
-     * Test that we can search for people.
-     */
     public function test_can_search_people(): void
     {
-        // TODO: Implement this test
-        $this->markTestIncomplete('Implement PersonApiTest@test_can_search_people');
+        Person::factory()->create(['name' => 'Luke Skywalker']);
+        Person::factory()->create(['name' => 'Darth Vader']);
+
+        $this->getJson('/api/people?search=Luke')
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.name', 'Luke Skywalker');
     }
 
-    /**
-     * Test that we can get a specific person.
-     */
     public function test_can_show_person(): void
     {
-        // TODO: Implement this test
-        $this->markTestIncomplete('Implement PersonApiTest@test_can_show_person');
+        $person = Person::factory()->create();
+
+        $this->getJson("/api/people/{$person->id}")
+            ->assertStatus(200)
+            ->assertJsonPath('data.id', $person->id)
+            ->assertJsonStructure(['data' => ['id', 'name', 'films']]);
     }
 
-    /**
-     * Test that we can create a person.
-     */
     public function test_can_create_person(): void
     {
-        // TODO: Implement this test
-        $this->markTestIncomplete('Implement PersonApiTest@test_can_create_person');
+        $this->postJson('/api/people', ['name' => 'Obi-Wan Kenobi', 'gender' => 'male'])
+            ->assertStatus(201)
+            ->assertJsonPath('data.name', 'Obi-Wan Kenobi');
+
+        $this->assertDatabaseHas('people', ['name' => 'Obi-Wan Kenobi']);
     }
 
-    /**
-     * Test that we can update a person.
-     */
     public function test_can_update_person(): void
     {
-        // TODO: Implement this test
-        $this->markTestIncomplete('Implement PersonApiTest@test_can_update_person');
+        $person = Person::factory()->create(['name' => 'Old Name']);
+
+        $this->putJson("/api/people/{$person->id}", ['name' => 'New Name'])
+            ->assertStatus(200)
+            ->assertJsonPath('data.name', 'New Name');
+
+        $this->assertDatabaseHas('people', ['id' => $person->id, 'name' => 'New Name']);
     }
 
-    /**
-     * Test that we can delete a person.
-     */
     public function test_can_delete_person(): void
     {
-        // TODO: Implement this test
-        $this->markTestIncomplete('Implement PersonApiTest@test_can_delete_person');
+        $person = Person::factory()->create();
+
+        $this->deleteJson("/api/people/{$person->id}")
+            ->assertStatus(200)
+            ->assertJsonStructure(['message']);
+
+        $this->assertDatabaseMissing('people', ['id' => $person->id]);
     }
 
-    /**
-     * Test that person includes related films.
-     */
     public function test_person_includes_films(): void
     {
-        // TODO: Implement this test
-        $this->markTestIncomplete('Implement PersonApiTest@test_person_includes_films');
+        $film = Film::factory()->create();
+        $person = Person::factory()->create();
+        $person->films()->attach($film->id);
+
+        $this->getJson("/api/people/{$person->id}")
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data.films')
+            ->assertJsonPath('data.films.0.id', $film->id);
     }
 }

@@ -2,35 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Film;
+use App\Models\Person;
 use App\Services\SwapiService;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
- * SWAPI Seeder
- *
- * Seeds the database with data from the Star Wars API.
- *
- * This is an EXAMPLE seeder to guide your implementation.
- * You'll need to:
- * 1. Fetch data from SWAPI using the SwapiService
- * 2. Transform the data to match your database schema
- * 3. Store it in your database
- * 4. Handle relationships (e.g., films and people)
- *
- * Key considerations:
- * - The application must work even if SWAPI is offline
- * - Consider using database transactions
- * - Handle errors gracefully
- * - Log progress for debugging
- * - Consider rate limiting when calling SWAPI
- * - Consider using a repository instead of using models directly
- *
- * Usage:
- *   php artisan db:seed --class=SwapiSeeder
- *
- * Or run all seeders:
- *   php artisan db:seed
+ * Seeds the database with Star Wars data from SWAPI.
+ * Films are seeded first since people reference film URLs.
+ * Uses updateOrCreate so re-running is safe (idempotent).
  */
 class SwapiSeeder extends Seeder
 {
@@ -41,79 +24,89 @@ class SwapiSeeder extends Seeder
         $this->swapiService = $swapiService;
     }
 
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Log::info('Starting SWAPI data seeding...');
+        $this->command->info('Fetching films from SWAPI...');
 
-        try {
-            // TODO: Implement seeding logic
+        $filmMap = $this->seedFilms();
+        $this->command->info('Seeded '.count($filmMap).' films.');
 
-            // Example approach:
-            // 1. Fetch and seed films
-            // $this->seedFilms();
+        $this->command->info('Fetching people from SWAPI (this may take a moment)...');
+        $peopleData = $this->seedPeople();
+        $this->command->info('Seeded '.count($peopleData).' people.');
 
-            // 2. Fetch and seed people
-            // $this->seedPeople();
+        $this->command->info('Linking people to films...');
+        $this->seedRelationships($peopleData, $filmMap);
 
-            // 3. Create relationships (film_person pivot table)
-            // $this->seedRelationships();
+        Log::info('SWAPI data seeding completed successfully!');
+    }
 
-            Log::info('SWAPI data seeding completed successfully!');
-        } catch (\Exception $e) {
-            Log::error('Error seeding SWAPI data', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+    /**
+     * Fetch and seed all films.
+     *
+     * @return array<string, Film> Map of swapi_url => Film model
+     */
+    private function seedFilms(): array
+    {
+        $filmsRaw = $this->swapiService->fetchFilms();
+        $filmMap = [];
 
-            throw $e;
+        DB::transaction(function () use ($filmsRaw, &$filmMap) {
+            foreach ($filmsRaw as $data) {
+                $film = Film::updateOrCreate(
+                    ['swapi_url' => $data['swapi_url']],
+                    Arr::except($data, ['swapi_url', 'character_urls'])
+                );
+                $filmMap[$data['swapi_url']] = $film;
+            }
+        });
+
+        return $filmMap;
+    }
+
+    /**
+     * Fetch and seed all people.
+     *
+     * @return array<int, array{model: Person, film_urls: array<string>}>
+     */
+    private function seedPeople(): array
+    {
+        $peopleRaw = $this->swapiService->fetchPeople();
+        $peopleData = [];
+
+        DB::transaction(function () use ($peopleRaw, &$peopleData) {
+            foreach ($peopleRaw as $data) {
+                $person = Person::updateOrCreate(
+                    ['swapi_url' => $data['swapi_url']],
+                    Arr::except($data, ['swapi_url', 'film_urls'])
+                );
+                $peopleData[] = [
+                    'model'     => $person,
+                    'film_urls' => $data['film_urls'] ?? [],
+                ];
+            }
+        });
+
+        return $peopleData;
+    }
+
+    /**
+     * Attach each person to their films via the pivot table.
+     *
+     * @param  array<int, array{model: Person, film_urls: array<string>}>  $peopleData
+     * @param  array<string, Film>  $filmMap
+     */
+    private function seedRelationships(array $peopleData, array $filmMap): void
+    {
+        foreach ($peopleData as $entry) {
+            $filmIds = collect($entry['film_urls'])
+                ->map(fn ($url) => $filmMap[$url]->id ?? null)
+                ->filter()
+                ->values()
+                ->toArray();
+
+            $entry['model']->films()->sync($filmIds);
         }
-    }
-
-    /**
-     * Seed films from SWAPI.
-     */
-    private function seedFilms(): void
-    {
-        // TODO: Implement this method
-        // 1. Fetch films from SWAPI
-        // 2. Transform data
-        // 3. Insert into database
-
-        Log::info('Seeding films...');
-
-        // Example:
-        // $filmsData = $this->swapiService->fetchFilms();
-        // foreach ($filmsData['results'] ?? [] as $filmData) {
-        //     Film::updateOrCreate(
-        //         ['swapi_url' => $filmData['url']],
-        //         [
-        //             'title' => $filmData['title'],
-        //             'episode_id' => $filmData['episode_id'],
-        //             // ... map other fields
-        //         ]
-        //     );
-        // }
-    }
-
-    /**
-     * Seed people from SWAPI.
-     */
-    private function seedPeople(): void
-    {
-        // TODO: Implement this method
-        Log::info('Seeding people...');
-    }
-
-    /**
-     * Seed relationships between films and people.
-     */
-    private function seedRelationships(): void
-    {
-        // TODO: Implement this method
-        // Link people to films based on SWAPI data
-        Log::info('Seeding relationships...');
     }
 }

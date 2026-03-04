@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\StatisticsService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Statistics Controller
@@ -54,11 +55,11 @@ class StatisticsController extends Controller
         // - Caching results (updates every 5 min anyway)
         // - Using the StatisticsService
 
-        $statistics = $this->statisticsService->getStatistics();
+        // Serve from Redis cache when available; falls back to live calculation
+        // Cache is refreshed every 5 minutes by UpdateStatisticsJob
+        $statistics = Cache::get('search_statistics')
+            ?? $this->statisticsService->getStatistics();
 
-        return response()->json([
-            'data' => $statistics,
-            'message' => 'TODO: Implement actual statistics calculation',
-        ]);
+        return response()->json(['data' => $statistics]);
     }
 }

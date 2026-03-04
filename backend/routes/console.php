@@ -1,22 +1,13 @@
 <?php
 
+use App\Jobs\UpdateStatisticsJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-/*
-|--------------------------------------------------------------------------
-| Scheduled Jobs
-|--------------------------------------------------------------------------
-|
-| TODO: Schedule the UpdateStatisticsJob to run every 5 minutes
-|
-| Example:
-| Schedule::job(new UpdateStatisticsJob)->everyFiveMinutes();
-|
-| Learn more: https://laravel.com/docs/scheduling
-|
-*/
+// Update cached search statistics every 5 minutes via the queue worker
+Schedule::job(new UpdateStatisticsJob)->everyFiveMinutes();

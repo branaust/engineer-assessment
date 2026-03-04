@@ -27,11 +27,15 @@ return new class extends Migration
     {
         Schema::create('films', function (Blueprint $table) {
             $table->id();
-
-            // TODO: Add your columns here
-            // Example: $table->string('title');
-
+            $table->string('title');
+            $table->unsignedTinyInteger('episode_id')->unique();
+            $table->text('opening_crawl')->nullable();
+            $table->string('director')->nullable();
+            $table->string('producer')->nullable();
+            $table->date('release_date')->nullable();
+            $table->string('swapi_url')->nullable()->unique();
             $table->timestamps();
+            $table->index('title');
         });
     }
 

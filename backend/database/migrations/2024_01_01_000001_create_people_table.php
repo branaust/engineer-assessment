@@ -28,11 +28,18 @@ return new class extends Migration
     {
         Schema::create('people', function (Blueprint $table) {
             $table->id();
-
-            // TODO: Add your columns here
-            // Example: $table->string('name');
-
+            $table->string('name');
+            $table->string('height')->nullable();
+            $table->string('mass')->nullable();
+            $table->string('hair_color')->nullable();
+            $table->string('skin_color')->nullable();
+            $table->string('eye_color')->nullable();
+            $table->string('birth_year')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('homeworld')->nullable();
+            $table->string('swapi_url')->nullable()->unique();
             $table->timestamps();
+            $table->index('name');
         });
     }
 

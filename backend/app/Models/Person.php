@@ -32,15 +32,13 @@ class Person extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'name', 'height', 'mass', 'hair_color', 'skin_color',
+        'eye_color', 'birth_year', 'gender', 'homeworld', 'swapi_url',
+    ];
 
-    /**
-     * TODO: Define relationship to films (many-to-many).
-     *
-     * Example implementation:
-     * public function films(): BelongsToMany
-     * {
-     *     return $this->belongsToMany(Film::class, 'film_person');
-     * }
-     */
+    public function films(): BelongsToMany
+    {
+        return $this->belongsToMany(Film::class, 'film_person');
+    }
 }

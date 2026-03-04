@@ -23,12 +23,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('film_person', function (Blueprint $table) {
-            $table->id();
-
-            // TODO: Add foreign keys and constraints here
-            // Example: $table->foreignId('film_id')->constrained()->onDelete('cascade');
-
-            $table->timestamps();
+            $table->foreignId('film_id')->constrained()->onDelete('cascade');
+            $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
+            $table->primary(['film_id', 'person_id']);
         });
     }
 
